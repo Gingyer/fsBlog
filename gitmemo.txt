@@ -1,0 +1,68 @@
+Github操作方法
+
+更新
+# --- 手順1：メインブランチに移動して最新にする ---
+git switch main
+git pull origin main
+
+# --- 作業後に以下を実行 ---
+
+# 1. 全ての変更ファイルを登録リストに入れる
+git add .
+
+# 2. GitHubに残すコメントを書いて保存（コミット）
+git commit -m "Webサイトに文字を表示できるようにした"
+
+# 3. GitHubへ送信
+git push origin main
+
+
+
+
+特定のファイルだけ更新
+# --- 手順1：メインブランチに移動して最新にする ---
+git switch main
+git pull origin main
+
+# --- 作業後に以下を実行 ---
+
+# 1. 更新したいファイル名だけを指定して登録リストに入れる
+# （例：index.html だけ更新したい場合）
+git add index.html
+
+# 2. そのファイルに対するコメントを書いて保存
+git commit -m "トップページの誤字を修正"
+
+# 3. GitHubへ送信
+git push origin main
+
+
+
+
+
+
+新しく作る
+# 1. フォルダを作って移動
+mkdir new-project
+cd new-project
+
+# 2. Git管理を始める
+git init
+
+# 3. メインブランチの名前を 'main' に設定する（重要）
+git branch -M main
+
+# --- ファイル作成・編集作業を行う ---
+
+# 4. 全ファイルを登録リストに入れる
+git add .
+
+# 5. 最初のコメントを書いて保存
+git commit -m "プロジェクトの初期作成"
+
+# 6. GitHubのリポジトリURLを登録（※URLは自分のものに書き換え）
+git remote add origin https://github.com/ユーザー名/リポジトリ名.git
+
+# 7. GitHubへ送信
+git push -u origin main
+
