@@ -11,13 +11,16 @@ git pull origin main
 git add .
 
 # 2. GitHubに残すコメントを書いて保存（コミット）
-git commit -m "Webサイトに文字を表示できるようにした"
+git commit -m "投稿用APIとブログの詳細記事取得APIを実装しました。"
 
 # 3. GitHubへ送信
 git push origin main
 
+source n-venv/bin/activate
 
+deactivate
 
+npm run dev 
 
 特定のファイルだけ更新
 # --- 手順1：メインブランチに移動して最新にする ---
