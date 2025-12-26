@@ -11,7 +11,7 @@ git pull origin main
 git add .
 
 # 2. GitHubに残すコメントを書いて保存（コミット）
-git commit -m "投稿用APIとブログの詳細記事取得APIを実装しました。"
+git commit -m "記事削除APIの作成、csshtmlの作成を行いました。"
 
 # 3. GitHubへ送信
 git push origin main
@@ -21,6 +21,14 @@ source n-venv/bin/activate
 deactivate
 
 npm run dev 
+
+
+git status
+成功
+「nothing to commit, working tree clean」
+
+
+
 
 特定のファイルだけ更新
 # --- 手順1：メインブランチに移動して最新にする ---
