@@ -18,7 +18,7 @@ model Post{
   id Int @id　@default(autoincrement())//ブログを投稿するたびに、idがつくようになる。
   title String
   description String
-  data DateTime @default(now())//投稿した時の時間
+  date DateTime @default(now())//投稿した時の時間
 }
 
 
