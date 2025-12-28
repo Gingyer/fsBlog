@@ -11,7 +11,7 @@ git pull origin main
 git add .
 
 # 2. GitHubに残すコメントを書いて保存（コミット）
-git commit -m "記事削除APIの作成、csshtmlの作成を行いました。"
+git commit -m "HTML、CSSへのデータベースの反映を実装しました。"
 
 # 3. GitHubへ送信
 git push origin main
