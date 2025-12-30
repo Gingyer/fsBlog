@@ -3,7 +3,7 @@ Github操作方法
 更新
 # --- 手順1：メインブランチに移動して最新にする ---
 git switch main
-git pull origin main
+git pul origin main
 
 # --- 作業後に以下を実行 ---
 
@@ -11,7 +11,7 @@ git pull origin main
 git add .
 
 # 2. GitHubに残すコメントを書いて保存（コミット）
-git commit -m "編集機能と編集モードから戻る機能を実装しました。"
+git commit -m "編集の更新機能、前回の文章を編集に記入する機能を実装しました。"
 
 # 3. GitHubへ送信
 git push origin main

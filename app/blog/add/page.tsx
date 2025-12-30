@@ -8,21 +8,25 @@ import { title } from "process";
 import React, { useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
+//サーバーに送る形式
 const postBlog = async (
     title:string|undefined,
     description:string|undefined
 ) => {
   const res = await fetch(`http://localhost:3000/api/blog`,{
+    //新規作成（POST）
     method: "POST",
+    //中身はJSON形式のテキスト
     headers: {
         "Content-Type":"applicattion/json",
     },
+    //テキストに変換
     body: JSON.stringify({title,description}),
   });
-
+  //サーバーから返ってきた生の通信データ
   return res.json();
 };
-
+//ブラウザのURLが、ファイルの場所と一致した瞬間
 const PostBlog = () => {
     const router = useRouter();
     //useRefは属性が取得できる。

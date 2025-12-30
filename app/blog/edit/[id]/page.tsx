@@ -1,35 +1,60 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, use, useEffect} from "react";
 import toast from "react-hot-toast";
 
+//サーバーに送る形式
 const editBlog = async (
     title:string|undefined,
     description:string|undefined,
     id:number
 ) => {
   const res = await fetch(`http://localhost:3000/api/blog/${id}`,{
+    //上書き保存（PUT）
     method: "PUT",
+    //中身はJSON形式のテキスト
     headers: {
-        "Content-Type":"applicattion/json",
+        "Content-Type":"application/json",
     },
+    //テキストに変換
     body: JSON.stringify({title,description,id}),
   });
-
+  //サーバーから返ってきた生の通信データ
   return res.json();
 };
+//編集時に反映させる
+const getBlogById = async (id:number) => {
+  //パスからデータを取ってきて、json形式にする
+  const res = await fetch(`http://localhost:3000/api/blog/${id}`);
+  const data = await res.json();
+  // regoin データのposts部分だけ切り取って送る
+  //     "message": "Success",
+  // 「「「"posts": [
+  //   　 {
+        //     "id": 1,
+        //     "title": "test1-updata",
+        //     "description": "test1-update",
+        //     "date": "2025-12-27T05:25:23.211Z"
+        // },」」」
+  // endregoin
+  return data.posts;
+};
 
-
-
-    
-const EditPost = ({params}: {params:{id:number}}) => {
+//ブラウザのURLが、ファイルの場所と一致した瞬間 
+const EditPost = ({params}: {params:Promise<{id:number}>}) => {
+  //トップページに切り替える
   const router = useRouter();
-  //useRefは属性が取得できる。
+  //paramsからuseを使って,idを取り出す
+  const{id} = use(params);
+  // regoin useRefは属性が取得できる。
+  // <input ref={titleRef} />と繋げられる。
+  // titleRef.current.valueのみで入力欄の文字を取り出せる。
+  // endregoin
   const titleRef = useRef<HTMLInputElement|null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement|null>(null);
 
   
-    //送信ボタンが押されたら、
+  //送信ボタンが押されたら、
   const handleSubmit = async(e: React.FormEvent) =>{
       //真っ白になる再読み込みを防ぐ
       e.preventDefault();
@@ -39,7 +64,7 @@ const EditPost = ({params}: {params:{id:number}}) => {
       await editBlog(
         titleRef.current?.value, 
         descriptionRef.current?.value,
-        params.id
+        Number(id)
       );
 
       toast.success("編集に成功しました!",{id:"1"});
@@ -47,7 +72,22 @@ const EditPost = ({params}: {params:{id:number}}) => {
       //投稿ボタンを押したら、一つ前に戻る
       router.push("/");
       router.refresh();
-  }
+  };
+  //編集時に前回の記述を記入する(表示時に一回だけ)
+  useEffect(()=>{
+          //L画面に表示されたら、
+    //thenがdataが送られるまで待つ
+    getBlogById(Number(id)).then((data)=>{
+      //もしtitleRefとdescriptionRefにデータが入っていたら、
+      if(titleRef.current && descriptionRef.current){
+        //タイトルと説明のデータを書き換える
+        titleRef.current.value = data.title;
+        descriptionRef.current.value = data.description;
+      }
+    }).catch(err=>{
+      toast.error("エラーが発生しました。",{id:"1"});
+    });
+  },[]);
     return (<>
   <div className="w-full m-auto flex my-4">
     <div className="flex flex-col justify-center items-center m-auto">
