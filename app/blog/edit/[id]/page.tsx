@@ -39,7 +39,19 @@ const getBlogById = async (id:number) => {
   // endregoin
   return data.posts;
 };
-
+//記事を削除する
+const deleteBlog = async (id:number) => {
+  const res = await fetch(`http://localhost:3000/api/blog/${id}`,{
+    //削除（DELETE）
+    method: "DELETE",
+    //中身はJSON形式のテキスト
+    headers: {
+        "Content-Type":"application/json",
+    },
+  });
+  //サーバーから返ってきた生の通信データ
+  return res.json();
+};
 //ブラウザのURLが、ファイルの場所と一致した瞬間 
 const EditPost = ({params}: {params:Promise<{id:number}>}) => {
   //トップページに切り替える
@@ -69,9 +81,18 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
 
       toast.success("編集に成功しました!",{id:"1"});
 
-      //投稿ボタンを押したら、一つ前に戻る
+      //一つ前に戻って、情報の更新する
       router.push("/");
       router.refresh();
+  };
+  //削除ボタンが押されたら、
+  const handleDelete = async () => {
+    toast.loading("削除中です・・・")
+    //削除する
+    await deleteBlog(Number(id));
+    //一つ前に戻って、情報の更新する
+    router.push("/");
+    router.refresh();
   };
   //編集時に前回の記述を記入する(表示時に一回だけ)
   useEffect(()=>{
@@ -107,7 +128,8 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
         <button className="font-semibold px-4 py-2 shadow-xl bg-slate-200 rounded-lg m-auto hover:bg-slate-100">
           更新
         </button>
-        <button className="ml-2 font-semibold px-4 py-2 shadow-xl bg-red-400 rounded-lg m-auto hover:bg-slate-100">
+        <button onClick={handleDelete} 
+        className="ml-2 font-semibold px-4 py-2 shadow-xl bg-red-400 rounded-lg m-auto hover:bg-slate-100">
           削除
         </button>
       </form>
