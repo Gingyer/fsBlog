@@ -15,10 +15,10 @@ datasource db {
 }
 
 model Post{
-  id Int @id　@default(autoincrement())//ブログを投稿するたびに、idがつくようになる。
+  id Int @id @default(autoincrement())//ブログを投稿するたびに、idがつくようになる。
   title String
   description String
   date DateTime @default(now())//投稿した時の時間
+  published Boolean  @default(true) //公開or非公開
 }
-
 

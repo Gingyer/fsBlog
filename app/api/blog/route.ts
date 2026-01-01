@@ -19,7 +19,17 @@ export async function main(){
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
 export const GET = async (req: Request, RES:NextResponse) =>{
     try{
+
+        const { title, description, published } = await req.json();
         await main();
+
+        const post = await prisma.post.create({
+      data: { 
+        title, 
+        description, 
+        published // 👇 答え: DBに保存する
+      },
+    });
         //接続が成功したら、全記事(findMany)を取得する
         //Post(schema.prisma)を呼び出す↓　　await:処理が終わるまでこの関数だけ止める。
         const posts = await prisma.post.findMany();
