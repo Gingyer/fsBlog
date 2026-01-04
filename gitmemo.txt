@@ -3,7 +3,7 @@ Github操作方法
 更新
 # --- 手順1：メインブランチに移動して最新にする ---
 git switch main
-git pul origin main
+git pull origin main
 
 # --- 作業後に以下を実行 ---
 
