@@ -1,12 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useRef, use, useEffect} from "react";
+import React, { useRef, use, useEffect, useState} from "react";
 import toast from "react-hot-toast";
 
 //サーバーに送る形式
 const editBlog = async (
     title:string|undefined,
     description:string|undefined,
+    published:boolean,
     id:number
 ) => {
   const res = await fetch(`http://localhost:3000/api/blog/${id}`,{
@@ -17,7 +18,7 @@ const editBlog = async (
         "Content-Type":"application/json",
     },
     //テキストに変換
-    body: JSON.stringify({title,description,id}),
+    body: JSON.stringify({title,description,published,id}),
   });
   //サーバーから返ってきた生の通信データ
   return res.json();
@@ -64,6 +65,7 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
   // endregoin
   const titleRef = useRef<HTMLInputElement|null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement|null>(null);
+  const [published, setIsPublished] = useState<boolean>(false);
 
   
   //送信ボタンが押されたら、
@@ -76,6 +78,7 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
       await editBlog(
         titleRef.current?.value, 
         descriptionRef.current?.value,
+        published,
         Number(id)
       );
 
@@ -104,6 +107,8 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
         //タイトルと説明のデータを書き換える
         titleRef.current.value = data.title;
         descriptionRef.current.value = data.description;
+        //公開状態も反映
+        setIsPublished(data.published ?? false);
       }
     }).catch(err=>{
       toast.error("エラーが発生しました。",{id:"1"});
@@ -125,6 +130,21 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
           placeholder="記事詳細を入力"
           className="rounded-md px-4 py-2 w-full my-2 bg-white border border-gray-300"
         ></textarea>
+        
+        {/* 公開設定のUI */}
+        <div className="flex items-center gap-2 mb-4">
+          <input
+            id="publish-checkbox-edit"
+            type="checkbox"
+            checked={published}
+            onChange={(e) => setIsPublished(e.target.checked)}
+            className="w-4 h-4 cursor-pointer"
+          />
+          <label htmlFor="publish-checkbox-edit" className="text-slate-200 cursor-pointer">
+            公開する
+          </label>
+        </div>
+
         <button className="font-semibold px-4 py-2 shadow-xl bg-slate-200 rounded-lg m-auto hover:bg-slate-100">
           更新
         </button>

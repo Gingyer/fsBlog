@@ -80,7 +80,7 @@ return (
                             />
                             <label htmlFor="publish-checkbox" className="text-slate-200 cursor-pointer">
                                 公開する
-                            </label>_
+                            </label>
                         </div>
 
                         <button className="font-semibold px-4 py-2 shadow-xl bg-slate-200 rounded-lg m-auto hover:bg-slate-100">

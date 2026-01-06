@@ -10,13 +10,13 @@ async function fetchAllBlogs() {
     cache: "no-store", 
   });
 
-  // 修正2: 変数名を date ではなく data に変更（わかりやすくするため）
+  //Json形式でデータを取得
   const data = await res.json();
   
-  // ★重要: ここでターミナルに何が出るか確認してください
+  //ここでターミナルに何が出るか確認してください
   console.log("APIからの返事:", data);
 
-  // もしAPI側でエラーが起きていたら、postsは存在しないので空配列を返す
+  //もしAPI側でエラーが起きていたら、postsは存在しないので空配列を返す
   if (!data.posts) {
     console.log("記事が見つかりませんでした、またはエラーです。");
     return [];
@@ -32,7 +32,7 @@ export default async function Home() {
     <main className="w-full h-full">
       <div className="md:w-2/4 sm:w-3/4 m-auto p-4 my-5 rounded-lg bg-blue-900 drop-shadow-xl">
         <h1 className="text-slate-200 text-center text-2xl font-extrabold">
-          Full Stack Blog 📝
+         Pre-Practicum Preparation Blog
         </h1>
       </div>
 

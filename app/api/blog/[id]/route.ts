@@ -35,13 +35,23 @@ export const PUT = async (req: Request, RES:NextResponse) =>{
     try{
         //idを取得するために、blogを切る。[1]をidに入れる。
         const id: number = parseInt(req.url.split("/blog/")[1]);
-        const {title, description} = await req.json();
+        const {title, description, published} = await req.json();
         await main();
         
         //接続が成功したら、idの記事を編集する。                               
         //Post(schema.prisma)を呼び出す↓
+        //更新するデータを準備する（タイトルと説明は必ず更新）
+        const updateData: {title: string, description: string, published?: boolean} = {
+            title,
+            description,
+        };
+        //publishedが送られてきた場合だけ、公開状態を更新する
+        if (published !== undefined) {
+            updateData.published = published;
+        }
+        
         const posts = await prisma.post.update({
-            data: {title, description},
+            data: updateData,
             where: {id},
         });
         //postを全て取得できたら、200(正常終了)をつけて、実行結果をJSONファイルにまとめて送る。
