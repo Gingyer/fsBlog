@@ -51,7 +51,7 @@ export const GET = async (req: Request) =>{
 
 //<<<ブログ投稿用のAPI>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
-export const POST = async (req: Request, RES:NextResponse) =>{
+export const POST = async (req: Request) =>{
 
     try{
         //reqからjson形式で、title, description, publishedを取り出す。
