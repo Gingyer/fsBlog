@@ -1,29 +1,27 @@
 import Link from "next/link";
 import { PostType } from "./types";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 async function fetchAllBlogs(search: string = "") {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const url = search
-    ? `${baseUrl}/api/blog?search=${encodeURIComponent(search)}`
-    : `${baseUrl}/api/blog`;
-  const res = await fetch(url, {
-    cache: "no-store",
-
-  });
-
-  //Json形式でデータを取得
-  const data = await res.json();
-  
-  //ここでターミナルに何が出るか確認してください
-  console.log("APIからの返事:", data);
-
-  //もしAPI側でエラーが起きていたら、postsは存在しないので空配列を返す
-  if (!data.posts) {
-    console.log("記事が見つかりませんでした、またはエラーです。");
+  try {
+    await prisma.$connect();
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+        ...(search && {
+          title: { contains: search, mode: "insensitive" },
+        }),
+      },
+    });
+    return posts;
+  } catch (err) {
+    console.error("DB取得エラー:", err);
     return [];
+  } finally {
+    await prisma.$disconnect();
   }
-
-  return data.posts;
 }
 
 
