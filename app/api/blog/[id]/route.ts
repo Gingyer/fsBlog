@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 
 //<<<ブログの詳細記事取得API>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
-export const GET = async (req: Request, RES:NextResponse) =>{
+export const GET = async (_req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try{
-        //idを取得するために、blogを切る。[1]をidに入れる。
-        const id: number = parseInt(req.url.split("/blog/")[1]);
+        //idを取得するために、paramsからidを取り出す。
+        const { id: idStr } = await params;
+        const id: number = parseInt(idStr);
         await main();
         //接続が成功したら、一つのもの(findFirst)を取得する
-                                        //┌ーーーーー[0]ーーーーーーー┐     ┌[1]┐
-        //Post(schema.prisma)を呼び出す↓　　http://localhost:3000/api/blog/[3]←を取得する(id)
+        //Post(schema.prisma)を呼び出す↓
         const posts = await prisma.post.findFirst({where:{id}});
         //postを全て取得できたら、200(正常終了)をつけて、実行結果をJSONファイルにまとめて送る。
         return NextResponse.json({message:"Success", posts}, {status:200});
@@ -31,14 +31,15 @@ export const GET = async (req: Request, RES:NextResponse) =>{
 
 //<<<ブログの記事編集API>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
-export const PUT = async (req: Request, RES:NextResponse) =>{
+export const PUT = async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try{
-        //idを取得するために、blogを切る。[1]をidに入れる。
-        const id: number = parseInt(req.url.split("/blog/")[1]);
+        //idを取得するために、paramsからidを取り出す。
+        const { id: idStr } = await params;
+        const id: number = parseInt(idStr);
         const {title, description, published} = await req.json();
         await main();
-        
-        //接続が成功したら、idの記事を編集する。                               
+
+        //接続が成功したら、idの記事を編集する。
         //Post(schema.prisma)を呼び出す↓
         //更新するデータを準備する（タイトルと説明は必ず更新）
         const updateData: {title: string, description: string, published?: boolean} = {
@@ -50,6 +51,9 @@ export const PUT = async (req: Request, RES:NextResponse) =>{
             updateData.published = published;
         }
         
+        if (published !== undefined) {
+            updateData.published = published;
+        }
         const posts = await prisma.post.update({
             data: updateData,
             where: {id},
@@ -63,19 +67,21 @@ export const PUT = async (req: Request, RES:NextResponse) =>{
 
     }finally{//どちらでも実行される
         //接続を切る
+
         await prisma.$disconnect();
     }
 };
 
 //<<<ブログの削除用API>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
-export const DELETE = async (req: Request, RES:NextResponse) =>{
+export const DELETE = async (_req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try{
-        //idを取得するために、blogを切る。[1]をidに入れる。
-        const id: number = parseInt(req.url.split("/blog/")[1]);
+        //idを取得するために、paramsからidを取り出す。
+        const { id: idStr } = await params;
+        const id: number = parseInt(idStr);
         await main();
-        
-        //接続が成功したら、idの記事を削除する。                               
+
+        //接続が成功したら、idの記事を削除する。
         //Post(schema.prisma)を呼び出す↓
         const posts = await prisma.post.delete({
             where:{id},

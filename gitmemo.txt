@@ -50,9 +50,6 @@ git push origin main
 
 
 
-
-
-
 新しく作る
 # 1. フォルダを作って移動
 mkdir new-project

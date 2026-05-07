@@ -10,12 +10,23 @@ generator client {
 }
 
 datasource db {
+<<<<<<< HEAD
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Post{
   id Int @id　@default(autoincrement())//ブログを投稿するたびに、idがつくようになる。
+=======
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Post{
+  id Int @id @default(autoincrement())
+
+>>>>>>> c6a5fcb (検索機能追加)
   title String
   description String
   date DateTime @default(now())//投稿した時の時間

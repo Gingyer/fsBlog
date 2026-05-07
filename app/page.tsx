@@ -1,13 +1,14 @@
-import { fsync } from "fs";
-import Image from "next/image";
 import Link from "next/link";
 import { PostType } from "./types";
 
-async function fetchAllBlogs() {
-  // 修正1: エラーハンドリングを追加
-  // fetchはURLが間違っていると失敗します
-  const res = await fetch(`http://localhost:3000/api/blog`, {
-    cache: "no-store", 
+async function fetchAllBlogs(search: string = "") {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const url = search
+    ? `${baseUrl}/api/blog?search=${encodeURIComponent(search)}`
+    : `${baseUrl}/api/blog`;
+  const res = await fetch(url, {
+    cache: "no-store",
+
   });
 
   //Json形式でデータを取得
@@ -25,8 +26,11 @@ async function fetchAllBlogs() {
   return data.posts;
 }
 
-export default async function Home() {
-  const posts = await fetchAllBlogs();
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
+  const { search = "" } = await searchParams;
+  const posts = await fetchAllBlogs(search);
+
 
   return (
     <main className="w-full h-full">
@@ -45,6 +49,23 @@ export default async function Home() {
         </Link>
       </div>
 
+
+      <form method="GET" className="mx-auto my-3 flex w-3/4 max-w-2xl justify-center rounded-md bg-slate-500 p-2 shadow-lg">
+        <input
+          type="text"
+          name="search"
+          defaultValue={search}
+          placeholder="タイトルで検索..."
+          className="min-w-0 flex-1 rounded-l-md border border-slate-400 bg-slate-200 p-2 text-slate-900 placeholder:text-slate-600 focus:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        />
+        <button
+          type="submit"
+          className="rounded-r-md bg-slate-900 px-4 py-2 font-semibold text-slate-100 hover:bg-slate-800"
+        >
+          検索
+        </button>
+      </form>
+
       <div className="w-full flex flex-col justify-center items-center">
         {/* postsが存在し、かつ長さが0より大きい場合のみマップする */}
         {posts && posts.length > 0 ? (
@@ -55,9 +76,12 @@ export default async function Home() {
             >
               <div className="flex items-center my-3">
                 <div className="mr-auto">
-                  <h2 className="mr-auto font-semibold text-slate-50">
-                    {post.title}
-                  </h2>
+
+                  <Link href={`/blog/${post.id}`}>
+                    <h2 className="mr-auto font-semibold text-slate-50 hover:underline">
+                      {post.title}
+                    </h2>
+                  </Link>
                 </div>
                 <Link
                   href={`/blog/edit/${post.id}`}
@@ -73,11 +97,7 @@ export default async function Home() {
                 </blockquote>
               </div>
 
-              <div className="mr-auto my-1">
-                <h2 className="font-bold text-slate-50">
-                  {post.description}
-                </h2>
-              </div>
+
             </div>
           ))
         ) : (
@@ -87,4 +107,6 @@ export default async function Home() {
       </div>
     </main>
   );
+
 }
+

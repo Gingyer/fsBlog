@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic';
 import { PrismaClient } from "@prisma/client";
-import { SegmentPrefixRSCPathnameNormalizer } from "next/dist/server/normalizers/request/segment-prefix-rsc";
 import { NextResponse } from "next/server";
 
 //データベース操作ロボット（PrismaClient）を変数に入れる
@@ -17,14 +16,25 @@ export async function main(){
 
 //<<<ブログの全記事取得用のAPI>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
-export const GET = async (req: Request, RES:NextResponse) =>{
+export const GET = async (req: Request) =>{
+    //URLからsearchクエリパラメータを取得する（例: /api/blog?search=タイトル）
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get("search") ?? "";
+
+
     try{
         await main();
         //接続が成功したら、公開済みの記事(findMany)を取得する
         //Post(schema.prisma)を呼び出す↓　　await:処理が終わるまでこの関数だけ止める。
         //published: true の記事だけを取得
+        //searchが空なら全件、値があればタイトルで部分一致検索する
         const posts = await prisma.post.findMany({
-            where: { published: true }
+            where: {
+                published: true,
+                ...(search && {
+                    title: { contains: search, mode: "insensitive" }
+                }),
+            },
         });
         //postを全て取得できたら、200(正常終了)をつけて、実行結果をJSONファイルにまとめて送る。
         return NextResponse.json({message:"Success", posts}, {status:200});
@@ -42,6 +52,7 @@ export const GET = async (req: Request, RES:NextResponse) =>{
 //<<<ブログ投稿用のAPI>>>
 //リクエスト(req)とレスポンス(res)を型指定で受け取る。
 export const POST = async (req: Request, RES:NextResponse) =>{
+
     try{
         //reqからjson形式で、title, description, publishedを取り出す。
         const {title, description, published} = await req.json();

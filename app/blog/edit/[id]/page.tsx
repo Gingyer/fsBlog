@@ -10,7 +10,7 @@ const editBlog = async (
     published:boolean,
     id:number
 ) => {
-  const res = await fetch(`http://localhost:3000/api/blog/${id}`,{
+  const res = await fetch(`/api/blog/${id}`,{
     //上書き保存（PUT）
     method: "PUT",
     //中身はJSON形式のテキスト
@@ -26,7 +26,7 @@ const editBlog = async (
 //編集時に反映させる
 const getBlogById = async (id:number) => {
   //パスからデータを取ってきて、json形式にする
-  const res = await fetch(`http://localhost:3000/api/blog/${id}`);
+  const res = await fetch(`/api/blog/${id}`);
   const data = await res.json();
   // regoin データのposts部分だけ切り取って送る
   //     "message": "Success",
@@ -42,7 +42,7 @@ const getBlogById = async (id:number) => {
 };
 //記事を削除する
 const deleteBlog = async (id:number) => {
-  const res = await fetch(`http://localhost:3000/api/blog/${id}`,{
+  const res = await fetch(`/api/blog/${id}`,{
     //削除（DELETE）
     method: "DELETE",
     //中身はJSON形式のテキスト
@@ -107,10 +107,12 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
         //タイトルと説明のデータを書き換える
         titleRef.current.value = data.title;
         descriptionRef.current.value = data.description;
+
+        descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";
         //公開状態も反映
         setIsPublished(data.published ?? false);
       }
-    }).catch(err=>{
+    }).catch(_err=>{
       toast.error("エラーが発生しました。",{id:"1"});
     });
   },[]);
@@ -128,7 +130,9 @@ const EditPost = ({params}: {params:Promise<{id:number}>}) => {
         <textarea
         ref={descriptionRef}
           placeholder="記事詳細を入力"
-          className="rounded-md px-4 py-2 w-full my-2 bg-white border border-gray-300"
+
+          className="rounded-md px-4 py-2 w-full my-2 bg-white border border-gray-300 resize-none overflow-hidden"
+          onChange={(e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }}
         ></textarea>
         
         {/* 公開設定のUI */}

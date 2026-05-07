@@ -1,10 +1,6 @@
 "use client"
 
-import { handleBuildComplete } from "next/dist/build/adapter/build-complete";
-import { HtmlContext } from "next/dist/server/route-modules/pages/vendored/contexts/entrypoints";
-import { Hammersmith_One } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { title } from "process";
 import React, { useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -14,7 +10,7 @@ const postBlog = async (
     description:string|undefined,
     published:boolean
 ) => {
-  const res = await fetch(`http://localhost:3000/api/blog`,{
+  const res = await fetch(`/api/blog`,{
     //新規作成（POST）
     method: "POST",
     //中身はJSON形式のテキスト
@@ -66,7 +62,8 @@ return (
                         <textarea
                             ref={descriptionRef}
                             placeholder="記事詳細を入力"
-                            className="rounded-md px-4 py-2 w-full my-2 bg-white border border-gray-300"
+                            className="rounded-md px-4 py-2 w-full my-2 bg-white border border-gray-300 resize-none overflow-hidden"
+                            onChange={(e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }}
                         ></textarea>
                         
                         {/* 修正点4: 公開設定のUI */}
